@@ -11,7 +11,19 @@ class Queue extends Component
 
     public function mount()
     {
-        $this->songs = Song::all();
+        $this->songs();
+    }
+
+    private function songs()
+    {
+        $this->songs = Song::orderby("extra_life", "desc")->orderby("created_at")->get();
+    }
+
+    public function delete($id)
+    {
+        $song = Song::findOrFail($id);
+        $song->delete();
+        $this->songs();
     }
 
     public function render()

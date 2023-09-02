@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        
+
         \App\Models\Song::factory()->create([
             'request' => 'Represent by Weezer',
             'requester' => 'ADangerousMix',
@@ -27,10 +27,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Song::factory()->create([
-            'request' => 'Island in the Sun by Weezer',
-            'requester' => 'GearboxUnion',
+            'request' => 'Got the Life by Korn',
+            'requester' => 'ADangerousMix',
             'extra_life' => false,
             'donation' => ''
+        ]);
+
+        \App\Models\Song::factory()->create([
+            'request' => 'Island in the Sun by Weezer',
+            'requester' => 'GearboxUnion',
+            'extra_life' => true,
+            'donation' => '25'
         ]);
 
         \App\Models\Song::factory()->create([
