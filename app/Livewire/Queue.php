@@ -9,6 +9,20 @@ class Queue extends Component
 {
     public $songs;
 
+    public $request;
+
+    public $requester;
+
+    public $extra_life;
+
+    public $donation;
+
+    #[On('song-created')]
+    public function updateSongs()
+    {
+        $this->songs();
+    }
+
     public function mount()
     {
         $this->songs();

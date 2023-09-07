@@ -4,17 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{ $title ?? 'Page Title' }}</title>
+        <title>{{ $title ?? 'Song Call' }}</title>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen font-sans antialiased">
         <!-- The navbar with `sticky` -->
         <x-nav sticky>
             <x-slot:brand>
-                <!-- Drawer toggle for "main-drawer" -->
-                <label for="main-drawer" class="lg:hidden mr-3">
-                    <x-icon name="o-bars-3" class="cursor-pointer" />
-                </label>
                 Song Call
             </x-slot:brand>
 
