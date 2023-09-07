@@ -1,0 +1,8 @@
+export const config = {
+    twitch: {
+        url: "wss://irc-ws.chat.twitch.tv:443",
+        oauth: "",
+        nick: '',
+        channel: ''
+    }
+};

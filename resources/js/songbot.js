@@ -1,26 +1,64 @@
-const ws = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
-const oAuth = "dnmyplxa5k01r6ipiswu7epemojrxg";
-const nick = 'adangerousmix';
-const channel = 'adangerousmix';
+import { config } from '../../config';
 
-ws.addEventListener('open', () => {
-    // ws.send('CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands');
-    ws.send(`PASS oauth:${oAuth}`);
-    ws.send(`NICK ${nick}`);
-    ws.send(`JOIN #${channel}`);
+const socket = new WebSocket(config.twitch.url);
+const oAuth = config.twitch.oauth;
+const nick = config.twitch.nick;
+const channel = config.twitch.channel;
+
+socket.addEventListener('open', () => {
+    // socket.send('CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands');
+    socket.send(`PASS oauth:${oAuth}`);
+    socket.send(`NICK ${nick}`);
+    socket.send(`JOIN #${channel}`);
+    console.log('Websocket opened.');
 });
 
-// ws.addEventListener('onopen', () => {
-// });
+socket.addEventListener('error', (event) => {
+    console.log(event);
+});
 
-ws.addEventListener('message', event => {
+socket.addEventListener('close', (event) => {
+    console.log(event);
+    console.log('Websocket closed.');
+    if (event.code == 1000) {
+        console.log("Normal closure, meaning that the purpose for which the connection was established has been fulfilled.");
+    } else if(event.code == 1001) {
+        console.log("An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page.");
+    } else if(event.code == 1002) {
+        console.log("An endpoint is terminating the connection due to a protocol error");
+    } else if(event.code == 1003) {
+        console.log("An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).");
+    } else if(event.code == 1004) {
+        console.log("Reserved. The specific meaning might be defined in the future.");
+    } else if(event.code == 1005) {
+        console.log("No status code was actually present.");
+    } else if(event.code == 1006) {
+        console.log("The connection was closed abnormally, e.g., without sending or receiving a Close control frame");
+    } else if(event.code == 1007) {
+        console.log("An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [https://www.rfc-editor.org/rfc/rfc3629] data within a text message).");
+    } else if(event.code == 1008) {
+        console.log("An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy.");
+    } else if(event.code == 1009) {
+        console.log("An endpoint is terminating the connection because it has received a message that is too big for it to process.");
+    } else if(event.code == 1010) { // Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.
+        console.log("An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: " + event.reason);
+    } else if(event.code == 1011) {
+        console.log("A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.");
+    } else if(event.code == 1015) {
+        console.log("The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).");
+    } else {
+        console.log("Unknown reason");
+    }
+});
+
+socket.addEventListener('message', event => {
+    if (event.data.includes("PING")) socket.send("PONG");
+    if (!event.data.includes("!song")) return;
     // console.log(event.data);
     const message = event.data.split(' :')[1];
     const commandName = message.split(' ')[0];
     const request = message.replace(commandName, '').trim();
     const requester = event.data.split('!')[0].replace(':', '').trim();
-
-    if (event.data.includes("PING")) ws.send("PONG");
 
     if (commandName === '!song') {
         let component = Livewire.getByName('createsong')[0];
@@ -33,11 +71,10 @@ ws.addEventListener('message', event => {
     } else {
         console.log('No command.');
     }
-    if (event.data.includes("Hello world")) ws.send(`PRIVMSG #${channel} :cringe`);
+    if (event.data.includes("Hello world")) socket.send(`PRIVMSG #${channel} :cringe`);
 });
 
 Livewire.on('song-created', () => {
-    console.log('Listener for song-created triggered.');
     let component = Livewire.getByName('queue')[0];
     component.updateSongs();
 });
