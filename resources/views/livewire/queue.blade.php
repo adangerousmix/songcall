@@ -1,4 +1,5 @@
 <div>
+    <livewire:create-song />
     @foreach($songs as $song)
         <x-list-item :item="$song" sub-value="request">
             @if($song->extra_life)

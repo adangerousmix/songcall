@@ -61,7 +61,7 @@ socket.addEventListener('message', event => {
     const requester = event.data.split('!')[0].replace(':', '').trim();
 
     if (commandName === '!song') {
-        let component = Livewire.getByName('createsong')[0];
+        let component = Livewire.getByName('create-song')[0];
         component.set('form.request', request);
         component.set('form.requester', requester);
         component.set('form.extra_life', false);
